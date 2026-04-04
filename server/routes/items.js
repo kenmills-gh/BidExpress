@@ -15,16 +15,19 @@ router.get('/', async (req, res) => {
 });
 
 // POST a new item
-router.post('/', async (res, req) => {
+router.post('/', async (req, res) => {
   try {
     const { name, description, starting_price, end_time, seller_id } = req.body;
 
     // The $1, $2 syntax prevents SQL Injection attacks
     // RETURNING * tells Postgres to send back the newly created row
     const newItem = await pool.query(
-      'INSERT INTO items (name, description, starting_price, end_time, seller_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      `INSERT INTO items (name, description, starting_price, end_time, seller_id) 
+       VALUES ($1, $2, $3, $4, $5) 
+       RETURNING *`,
       [name, description, starting_price, end_time, seller_id]
     );
+
     // Send the newly created item back to the client
     res.status(201).json(newItem.rows[0]);
   } catch (err) {
