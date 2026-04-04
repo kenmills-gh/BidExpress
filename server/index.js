@@ -7,6 +7,7 @@ import pool from './database/db.js';
 
 // Route Imports
 import itemRoutes from './routes/items.js';
+import bidRoutes from './routes/bids.js';
 
 dotenv.config();
 
@@ -14,7 +15,9 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 app.use('/api/items', itemRoutes);
+app.use('/api/bids', bidRoutes);
 
 // Create the HTTP server using the Express app
 const server = http.createServer(app);
