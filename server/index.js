@@ -3,11 +3,16 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import dotenv from "dotenv";
+import pool from "./database/db.js";
+
+// Route Imports
+import itemRoutes from "./routes/items.js";
 
 dotenv.config();
 
 // Initialize Express
 const app = express();
+app.use("/api/items", itemRoutes);
 app.use(cors());
 app.use(express.json());
 
