@@ -58,6 +58,9 @@ router.post('/', async (req, res) => {
     // 7. Commit the transaction (this successfully saves the data and unlocks the row)
     await client.query('COMMIT');
 
+    const io = req.app.get('io');
+    io.to(String(item_id)).emit('receive_new_bid', newBid.rows[0]);
+
     res.status(201).json(newBid.rows[0]);
   } catch (err) {
     // If ANYTHING fails above, ROLLBACK destroys the transaction so bad data isn't saved
