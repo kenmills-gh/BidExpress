@@ -14,6 +14,23 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET a single item by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const itemQuery = await pool.query('SELECT * FROM items WHERE id = $1', [id]);
+
+    if (itemQuery.rows.length === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    res.json(itemQuery.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // POST a new item
 router.post('/', async (req, res) => {
   try {
