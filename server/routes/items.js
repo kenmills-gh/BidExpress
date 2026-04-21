@@ -3,7 +3,7 @@ import pool from '../database/db.js';
 
 const router = express.Router();
 
-// GET all items
+// GET all items (Populates the homepage grid)
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM items ORDER BY created_at DESC');
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET a single item by ID
+// GET a single item by ID (Populates the specific auction room)
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -31,21 +31,19 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST a new item
+// POST a new item (Create a new auction listing)
 router.post('/', async (req, res) => {
   try {
-    const { name, description, starting_price, end_time, seller_id } = req.body;
+    // ADDED: image_url is now destructured from the request body
+    const { name, description, starting_price, end_time, seller_id, image_url } = req.body;
 
-    // The $1, $2 syntax prevents SQL Injection attacks
-    // RETURNING * tells Postgres to send back the newly created row
     const newItem = await pool.query(
-      `INSERT INTO items (name, description, starting_price, end_time, seller_id) 
-       VALUES ($1, $2, $3, $4, $5) 
+      `INSERT INTO items (name, description, starting_price, end_time, seller_id, image_url) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
        RETURNING *`,
-      [name, description, starting_price, end_time, seller_id]
+      [name, description, starting_price, end_time, seller_id, image_url]
     );
 
-    // Send the newly created item back to the client
     res.status(201).json(newItem.rows[0]);
   } catch (err) {
     console.error(err.message);
